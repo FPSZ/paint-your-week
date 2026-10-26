@@ -17,7 +17,7 @@ export function renderEmpty() {
   emptyEl.innerHTML = `<div class="empty-card">
     <div class="empty-swatch">${CAT_IDS.map(c => `<i style="${cv(c)}"></i>`).join('')}</div>
     <h2>${first ? '把这一周涂满颜色' : '这一周还空着'}</h2>
-    <p>${first ? '做完一件，点一下圆圈，它就被涂满颜色。' : '沿用上周，或者从模板开始。'}</p>
+    <p>${first ? '做完一件，按住圆圈，蓄满了它就被涂满颜色。' : '沿用上周，或者从模板开始。'}</p>
     <div class="empty-acts">
       ${canCopy ? '<button class="btn solid" data-e="copy">复制上周的安排</button>' : ''}
       <button class="btn ${canCopy ? 'soft' : 'solid'}" data-e="tpl">套用高效模板</button>

@@ -6,7 +6,6 @@ import { HH, avgEnergy } from './grid.js';
 import { makeBlockEl } from './blocks.js';
 import { inList, renderInbox } from '../inbox/list.js';
 import { refresh } from './refresh.js';
-import { toggleDone } from './actions.js';
 import { E, closeEditor, openEditor } from './editor.js';
 import { selectDay } from './nav.js';
 import { monthDrop, monthHover } from '../month/month.js';
@@ -335,5 +334,4 @@ export function setup() {
   window.addEventListener('pointercancel', e => { if (DRAG && e.pointerId === DRAG.pid) finish(true); });
   colsBox.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; V.px = e.clientX; V.py = e.clientY; V.overGrid = true; const b = e.target.closest('.blk'); V.hoverId = b && b.dataset.id !== 'draft' ? b.dataset.id : null; });
   colsBox.addEventListener('pointerleave', () => { V.overGrid = false; V.hoverId = null; });
-  colsBox.addEventListener('click', e => { const c = e.target.closest('.chk'); if (!c) return; const blk = c.closest('.blk'); if (blk) toggleDone(blk.dataset.id); });
 }

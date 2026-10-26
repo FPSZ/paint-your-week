@@ -39,6 +39,7 @@ import * as m36 from './app/keyboard.js';
 import * as m37 from './app/clock.js';
 import * as m38 from './app/boot.js';
 import * as m39 from './core/users.js';
+import * as m40 from './week/charge.js';
 
 // module setups run in the order the code was originally written
-for (const m of [m2, m5, m10, m11, m12, m13, m15, m18, m19, m20, m21, m22, m23, m24, m26, m27, m28, m29, m30, m32, m33, m35, m36, m37, m38, m39]) m.setup();
+for (const m of [m2, m5, m10, m11, m12, m13, m15, m18, m19, m40, m20, m21, m22, m23, m24, m26, m27, m28, m29, m30, m32, m33, m35, m36, m37, m38, m39]) m.setup();
