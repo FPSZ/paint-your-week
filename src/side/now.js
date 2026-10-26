@@ -28,7 +28,7 @@ export function renderNow() {
       <div class="now-time">${fmtT(cur.s)}–${fmtT(cur.e)} · 还剩 ${fmtDur(left)}</div>
       ${cur.q ? `<p class="now-cue">${esc(cur.q)}</p>` : ''}
       <div class="now-bar"><i style="width:${(frac * 100).toFixed(1)}%"></i></div>
-      <div class="now-act"><button class="btn on" data-act="focus" data-id="${cur.id}">专注模式</button><button class="btn on-ghost" data-act="done" data-id="${cur.id}">${cur.done ? '已涂色 · 撤回' : '完成并涂色'}</button></div>
+      <div class="now-act"><button class="btn on" data-act="focus" data-id="${cur.id}">专注模式</button><button class="btn on-ghost" data-act="done" data-id="${cur.id}">${cur.done ? '已涂色 · 撤回' : '涂色'}</button></div>
     </div>`;
   } else if (next) {
     const left = next.s - t.m, from = list.filter(b => b.e <= t.m).reduce((a, b) => Math.max(a, b.e), ST().startH * 60);

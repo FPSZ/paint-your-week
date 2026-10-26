@@ -45,3 +45,12 @@
 .pop-ft .sp{flex:1}
 .ed-act.danger{color:var(--c-life)}
 .ed-act.danger:hover{background:color-mix(in oklab,var(--c-life) 10%,transparent)}
+.pop-ft .btn + .btn{margin-left:6px}
+.ed-paint{position:relative;isolation:isolate;overflow:hidden;background:color-mix(in oklab,var(--c) 13%,transparent);color:color-mix(in oklab,var(--c) 78%,var(--ink));transition:background .2s,color .25s .12s,transform .3s var(--spring)}
+.ed-paint:hover{background:color-mix(in oklab,var(--c) 20%,transparent)}
+.ed-paint::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(158deg,color-mix(in oklab,var(--c) 78%,#fff),var(--c) 60%);transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease-out)}
+.ed-paint.on{color:var(--on)}
+.ed-paint.on::before{transform:none}
+.ed-paint .ic{width:17px;height:17px;stroke-width:2.1}
+.ed-paint path{stroke-dasharray:12;stroke-dashoffset:12;transition:stroke-dashoffset .3s .3s var(--ease-out)}
+.ed-paint.on path{stroke-dashoffset:0}

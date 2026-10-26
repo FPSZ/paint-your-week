@@ -32,7 +32,8 @@ export function fillEditor() {
   const goals = W().goals.filter(g => g.t.trim());
   $('#edGoalWrap').hidden = !goals.length;
   $('#edGoals').innerHTML = goals.map(g => `<button type="button" class="gchip ${b.g === g.id ? 'on' : ''}" data-g="${g.id}" title="${esc(g.t)}">${esc(g.t)}</button>`).join('');
-  $('#edDone').textContent = b.done ? '取消涂色' : '完成并涂色'; $('#edDone').className = b.done ? 'btn ghost' : 'btn paint';
+  const pb = $('#edPaint'); pb.classList.toggle('on', !!b.done); pb.setAttribute('aria-pressed', String(!!b.done));
+  $('span', pb).textContent = b.done ? '已涂色' : '涂色'; pb.title = b.done ? '再点一次取消涂色' : '标记为已完成';
   const hint = $('#edHint'); const lv = avgEnergy(b.s, b.e); const dur = b.e - b.s; let txt = '', good = false;
   if ((b.c === 'deep' || b.c === 'learn') && lv < .5) txt = '在你的低能时段，难的事放进金色时段更好。';
   else if (b.c === 'admin' && lv >= .9) txt = '高能时段，留给需要专注的事更好。';
@@ -115,7 +116,9 @@ export function setup() {
   $('#edDel').addEventListener('click', () => { const id = E.id; E.touched = true; closeEditor(true); removeBlock(id); });
   $('#edDup').addEventListener('click', () => { const id = E.id; E.touched = true; dupTomorrow(id); });
   $('#edBack').addEventListener('click', () => { const id = E.id; E.touched = true; closeEditor(true); backToInbox(id); });
-  $('#edDone').addEventListener('click', () => { const id = E.id; E.touched = true; closeEditor(); setTimeout(() => toggleDone(id), 60); });
+  // 完成 = done editing; 涂色 = the task itself is done (the editor stays open)
+  $('#edDone').addEventListener('click', () => closeEditor());
+  $('#edPaint').addEventListener('click', () => { const id = E.id; E.touched = true; toggleDone(id, $('#edPaint')); if (E) fillEditor(); });
   document.addEventListener('pointerdown', e => {
     if (!E) return;
     if (pop.contains(e.target)) return;

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>涂色周历</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect x=%272%27 y=%272%27 width=%2713%27 height=%2713%27 rx=%274%27 fill=%27%233C5CFF%27/%3E%3Crect x=%2717%27 y=%272%27 width=%2713%27 height=%2713%27 rx=%274%27 fill=%27%23FFB21A%27/%3E%3Crect x=%272%27 y=%2717%27 width=%2713%27 height=%2713%27 rx=%274%27 fill=%27%23FF3B6B%27/%3E%3Crect x=%2717%27 y=%2717%27 width=%2713%27 height=%2713%27 rx=%274%27 fill=%27%2322C993%27/%3E%3C/svg%3E">
 <script>try{var r=document.documentElement;window.__tuseHostTheme=r.getAttribute("data-theme");var t=localStorage.getItem("tuse-week-theme");if(t==="light"||t==="dark")r.setAttribute("data-theme",t)}catch(e){}</script>
 <!--fonts-->
 </head>
@@ -134,7 +135,8 @@
     <button class="icon-btn ed-act" id="edDup" type="button" title="复制到明天" aria-label="复制到明天"><svg class="ic" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg></button>
     <button class="icon-btn ed-act" id="edBack" type="button" title="放回待安排" aria-label="放回待安排"><svg class="ic" viewBox="0 0 24 24"><path d="M4.5 13.5h4l1.5 2.5h4l1.5-2.5h4"/><path d="M6.2 5h11.6l2.7 8.5V19H3.5v-5.5z"/></svg></button>
     <span class="sp"></span>
-    <button class="btn paint" id="edDone">完成并涂色</button>
+    <button class="btn ed-paint" id="edPaint" type="button" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.2 12.4l2.6 2.6 5-5.2"/></svg><span>涂色</span></button>
+    <button class="btn solid" id="edDone" type="button">完成</button>
   </div>
 </div>
 <div class="modal" id="modal" hidden>

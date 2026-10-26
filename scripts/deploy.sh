@@ -25,7 +25,7 @@ H=$1; SITE=/www/wwwroot/tuse-week-site/week; T=/tmp/tuse/dist; CONF=/www/server/
 rm -rf "$T" && mkdir -p "$T" && tar -xzf /tmp/tuse/dist.tgz -C "$T"
 mkdir -p "$SITE/assets"
 # hashed files first, then the page that points at them; files from older builds go after a week
-cp -n "$T"/assets/* "$SITE/assets/"
+cp --update=none "$T"/assets/* "$SITE/assets/"
 install -m 0644 "$T/index.html" "$SITE/index.html"
 find "$SITE/assets" -type f -mtime +7 | while read -r f; do [ -e "$T/assets/$(basename "$f")" ] || rm -f "$f"; done
 chown -R www:www "$SITE"
