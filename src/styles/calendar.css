@@ -35,5 +35,6 @@
 .col.past{background:color-mix(in oklab,var(--ink) 2.2%,transparent)}
 .elapsed{position:absolute;left:0;right:0;top:0;background:color-mix(in oklab,var(--ink) 2.6%,transparent);pointer-events:none;z-index:0;transition:height .9s var(--ease-out)}
 .nowline{position:absolute;left:-1px;right:0;height:2px;background:var(--now);z-index:6;pointer-events:none;transform:translateY(-1px);transition:top .9s var(--ease-out)}
-.nowline::before{content:"";position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--now);box-shadow:0 0 0 4px color-mix(in oklab,var(--now) 22%,transparent);animation:nowPulse 2.4s ease-in-out infinite}
-@keyframes nowPulse{50%{box-shadow:0 0 0 7px color-mix(in oklab,var(--now) 6%,transparent)}}
+.nowline::before{content:"";position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--now);box-shadow:0 0 0 4px color-mix(in oklab,var(--now) 22%,transparent)}
+.nowline::after{content:"";position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--now);pointer-events:none;animation:nowRing 2.4s ease-out infinite}
+@keyframes nowRing{from{transform:scale(1);opacity:.32}to{transform:scale(2.6);opacity:0}}

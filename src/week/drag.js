@@ -28,8 +28,9 @@ export function colAtX(x, strict) {
 export function minuteAtY(y, d) { const r = colEls[d].getBoundingClientRect(); return ST().startH * 60 + (y - r.top) / HH() * 60; }
 export function showGhost(d, s, e, c, prefix = '') {
   const st = ST(); const hh = HH();
+  const fresh = ghost.hidden || ghost.parentNode !== colEls[d];
   if (ghost.parentNode !== colEls[d]) colEls[d].appendChild(ghost);
-  ghost.style.cssText = `${cv(c)};top:${(s - st.startH * 60) / 60 * hh}px;height:${Math.max((e - s) / 60 * hh - 2, 14)}px`;
+  ghost.style.cssText = `${cv(c)};transform:translate3d(0,${(s - st.startH * 60) / 60 * hh}px,0);height:${Math.max((e - s) / 60 * hh - 2, 14)}px${fresh ? ';transition:none' : ''}`;
   ghost.firstChild.textContent = `${prefix}${fmtT(s)} – ${fmtT(e)}`;
   ghost.hidden = false;
 }
@@ -105,11 +106,12 @@ export function setCopy(on) {
   document.body.style.cursor = D.copy ? 'copy' : 'grabbing';
   if (D.tgt) showGhost(D.tgt.d, D.tgt.s, D.tgt.s + D.dur, D.cat, D.copy ? '复制 · ' : '');
 }
+// is the pointer over the red cancel zone at the top?
+function overCancel(D) { const zr = dropCancel.getBoundingClientRect(); return D.x >= zr.left - 12 && D.x <= zr.right + 12 && D.y >= zr.top - 12 && D.y <= zr.bottom + 18; }
 export function update() {
   const D = DRAG; if (!D || !D.active) return;
   if (D.kind === 'task' || D.kind === 'move') {
-    const zr = dropCancel.getBoundingClientRect();
-    const hot = D.x >= zr.left - 12 && D.x <= zr.right + 12 && D.y >= zr.top - 12 && D.y <= zr.bottom + 18;
+    const hot = overCancel(D);
     if (hot !== !!D.cancelHover) { D.cancelHover = hot; dropCancel.classList.toggle('hot', hot); if (hot) { try { navigator.vibrate && navigator.vibrate(6); } catch (er) {} } }
     if (hot && D.kind === 'move') { D.tgt = null; hideGhost(); flTime(D, null); return; }
   }
@@ -152,6 +154,7 @@ export function update() {
 }
 export function loop() {
   const D = DRAG; if (!D || !D.active) return;
+  if (D.dirty) { D.dirty = false; update(); }
   const r = scroller.getBoundingClientRect(); const top = dayheads.getBoundingClientRect().bottom; const edge = 56; let v = 0;
   if (!D.cancelHover && (D.kind !== 'task' || D.tgt)) {
     if (D.y < top + edge && D.y > r.top - 120) v = -Math.min(1, (top + edge - D.y) / edge) * 16;
@@ -167,6 +170,7 @@ export function loop() {
   requestAnimationFrame(loop);
 }
 export function finish(cancel) {
+  if (DRAG && DRAG.active && DRAG.dirty) { DRAG.dirty = false; update(); }
   const D = DRAG; DRAG = null; clearTimeout(D.lp); document.body.style.cursor = ''; ibx.classList.remove('ghosted'); dropCancel.classList.remove('show', 'hot');
   if (D.cancelHover) cancel = true;
   if (cancel && D.active) flTime(D, null);
@@ -319,7 +323,10 @@ export function setup() {
       if (dist > 4) activate(); else return;
     }
     if (D.kind === 'move' && e.altKey !== D.copy) setCopy(e.altKey);
-    e.preventDefault(); update();
+    // pointer events can arrive several times per frame; the drag loop picks up the latest position once per frame
+    // ...except entering or leaving the cancel zone, which should react right away
+    const flip = (D.kind === 'task' || D.kind === 'move') && overCancel(D) !== !!D.cancelHover;
+    e.preventDefault(); if (D.fresh && !flip) D.dirty = true; else { D.fresh = true; D.dirty = false; update(); }
   }, { passive: false });
   document.addEventListener('keydown', e => { if (e.key === 'Alt' && DRAG && DRAG.active && DRAG.kind === 'move') { e.preventDefault(); setCopy(true); } });
   document.addEventListener('keyup', e => { if (e.key === 'Alt' && DRAG && DRAG.active && DRAG.kind === 'move') { e.preventDefault(); setCopy(false); } });

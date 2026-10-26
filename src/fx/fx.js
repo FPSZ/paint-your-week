@@ -17,25 +17,31 @@ export function burst(x, y, n = 26, power = 1, colors, o = {}) {
   }
   if (!fxRun) { fxRun = true; requestAnimationFrame(stepFx); }
 }
-export function stepFx() {
-  ctx.clearRect(0, 0, innerWidth, innerHeight);
+// physics is in "60 fps frames" (k = elapsed / 16.7ms), so motion looks the same on any refresh rate
+let fxLast = 0;
+export function stepFx(now) {
+  now = now || performance.now();
+  const k = fxLast ? Math.min(3, Math.max(.2, (now - fxLast) / (1000 / 60))) : 1; fxLast = now;
+  const dpr = fx.width / innerWidth || 1, drag = Math.pow(.985, k);
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, fx.width, fx.height);
   parts = parts.filter(p => p.life < p.max);
   for (const p of parts) {
-    p.life++;
-    if (p.rain) { stepRain(p); ctx.globalAlpha = p.fade ? Math.max(0, (p.max - p.life) / 26) : 1; }
-    else { p.vx *= .985; p.vy = p.vy * .985 + p.g; p.x += p.vx; p.y += p.vy; p.r += p.vr; ctx.globalAlpha = Math.min(1, 1.4 - p.life / p.max * 1.4 + .4); }
+    p.life += k;
+    if (p.rain) { stepRain(p, k); ctx.globalAlpha = p.fade ? Math.max(0, (p.max - p.life) / 26) : 1; }
+    else { p.vx *= drag; p.vy = p.vy * drag + p.g * k; p.x += p.vx * k; p.y += p.vy * k; p.r += p.vr * k; ctx.globalAlpha = Math.min(1, 1.4 - p.life / p.max * 1.4 + .4); }
+    if (ctx.globalAlpha <= 0) continue;
     ctx.fillStyle = p.c;
-    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r);
+    const c = Math.cos(p.r) * dpr, s = Math.sin(p.r) * dpr;
+    if (p.sh === 3) { const f = .25 + Math.abs(Math.cos(p.life * .28 + p.ph)) * .75; ctx.setTransform(c, s, -s * f, c * f, p.x * dpr, p.y * dpr); ctx.fillRect(-p.s * .9, -p.s / 5, p.s * 1.8, p.s / 2.5); continue; }
+    ctx.setTransform(c, s, -s, c, p.x * dpr, p.y * dpr);
     if (p.sh === 0) ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
-    else if (p.sh === 3) { const f = Math.cos(p.life * .28 + p.ph); ctx.scale(1, .25 + Math.abs(f) * .75); ctx.fillRect(-p.s * .9, -p.s / 5, p.s * 1.8, p.s / 2.5); }
     else if (p.sh === 4) { const z = p.s; ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(-z / 2, -z / 2, z, z, z * .28); else ctx.rect(-z / 2, -z / 2, z, z); ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,.42)'; ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(-z * .32, -z * .32, z * .4, z * .2, z * .1); else ctx.rect(-z * .32, -z * .32, z * .4, z * .2); ctx.fill(); }
     else if (p.sh === 5) { const R = p.s / 2, r = R * .46; ctx.beginPath(); for (let k = 0; k < 10; k++) { const an = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? r : R; ctx.lineTo(Math.cos(an) * rr, Math.sin(an) * rr); } ctx.closePath(); ctx.fill(); }
     else if (p.sh === 1) { ctx.beginPath(); ctx.arc(0, 0, p.s / 2.6, 0, 6.283); ctx.fill(); }
-    else { const s = p.s / 1.6; ctx.beginPath(); for (let k = 0; k < 4; k++) { const an = k * Math.PI / 2; ctx.lineTo(Math.cos(an) * s, Math.sin(an) * s); ctx.lineTo(Math.cos(an + Math.PI / 4) * s * .35, Math.sin(an + Math.PI / 4) * s * .35); } ctx.closePath(); ctx.fill(); }
-    ctx.restore();
+    else { const z = p.s / 1.6; ctx.beginPath(); for (let j = 0; j < 4; j++) { const an = j * Math.PI / 2; ctx.lineTo(Math.cos(an) * z, Math.sin(an) * z); ctx.lineTo(Math.cos(an + Math.PI / 4) * z * .35, Math.sin(an + Math.PI / 4) * z * .35); } ctx.closePath(); ctx.fill(); }
   }
-  ctx.globalAlpha = 1;
-  if (parts.length) requestAnimationFrame(stepFx); else { fxRun = false; ctx.clearRect(0, 0, innerWidth, innerHeight); }
+  ctx.globalAlpha = 1; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (parts.length) requestAnimationFrame(stepFx); else { fxRun = false; fxLast = 0; ctx.clearRect(0, 0, innerWidth, innerHeight); }
 }
 export function celebrate(x, y, color, kind = 'done') {
   const c = resolveColor(color);
@@ -69,4 +75,7 @@ export function setup() {
   ctx = fx.getContext('2d');
   sizeFx();
   addEventListener('resize', sizeFx);
+  // creating an AudioContext takes ~100ms; do it while the page is idle so the first 涂色 doesn't stutter
+  // (it starts suspended until a click, and chime() resumes it)
+  (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => { if (ST().sound) ac(); }, { timeout: 4000 });
 }

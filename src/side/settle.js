@@ -100,9 +100,9 @@ export function startRain(ms) {
   };
   spawn();
 }
-export function stepRain(p) {
+export function stepRain(p, k = 1) {
   if (p.rest) return;
-  p.vy = Math.min(p.vy + p.g, p.vt); p.x += p.vx + Math.sin(p.life * p.fq + p.ph) * p.sw; p.y += p.vy; p.r += p.vr;
+  p.vy = Math.min(p.vy + p.g * k, p.vt); p.x += (p.vx + Math.sin(p.life * p.fq + p.ph) * p.sw) * k; p.y += p.vy * k; p.r += p.vr * k;
   if (!PILE) return;
   const i = clamp(Math.round(p.x / PILE.bw), 1, PILE.h.length - 2), floor = innerHeight - PILE.h[i] - p.s * .4;
   if (p.y >= floor) {
