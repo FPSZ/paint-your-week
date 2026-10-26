@@ -1,6 +1,7 @@
 import { $, REDUCED, cssVar, el, esc } from '../core/utils.js';
 import { ST } from '../core/state.js';
 import { stepRain } from '../side/settle.js';
+import { paintKey, paintSound } from './sound.js';
 
 /* ================= celebrate: confetti + sound ================= */
 export let fx, ctx;
@@ -63,9 +64,8 @@ export function tone(a, f, t0, dur, vol, type = 'sine') {
 export function chime(kind = 'done') {
   if (!ST().sound) return; const a = ac(); if (!a) return;
   try { if (a.state === 'suspended') a.resume(); } catch (e) {}
-  const t = a.currentTime + .01; const P = [523.25, 587.33, 659.25, 783.99, 880, 1046.5];
-  if (kind === 'done') { const base = P[2 + Math.floor(Math.random() * 3)]; tone(a, base, t, .25, .06); tone(a, base * 1.5, t + .07, .35, .05); }
-  else if (kind === 'big') { [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(a, f, t + i * .075, .45, .055)); tone(a, 1318.5, t + .32, .6, .035); }
+  const t = a.currentTime + .01;
+  if (kind === 'done' || kind === 'big') paintSound(a, t, paintKey(true), kind === 'big');
   else { tone(a, 392, t, .35, .05, 'triangle'); tone(a, 523.25, t + .1, .45, .045, 'triangle'); }
 }
 export function setFxRun(v) { fxRun = v; return v; }

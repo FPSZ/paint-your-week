@@ -9,6 +9,7 @@ import { RIC, countUp } from '../pages/review.js';
 import { appEl } from '../month/month.js';
 import { F, closeFocus } from '../ui/focus.js';
 import { ac, burst, chime, fxRun, parts, resolveColor, setFxRun, stepFx, tone } from '../fx/fx.js';
+import { settleSound } from '../fx/sound.js';
 
 /* ================= today settled: the payoff when every block of the day is painted ================= */
 export const settleEl = $('#settle');
@@ -70,10 +71,7 @@ export function settledCard(R, shut) {
 export function fanfare() {
   if (!ST().sound) return; const a = ac(); if (!a) return;
   try { if (a.state === 'suspended') a.resume(); } catch (e) {}
-  const t = a.currentTime + .02;
-  [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(a, f, t + i * .085, .5, .055, 'triangle'));
-  [1046.5, 1318.5, 1567.98].forEach(f => tone(a, f, t + .4, 1.2, .03));
-  [2093, 2637, 3136, 2637, 3520].forEach((f, i) => tone(a, f, t + .72 + i * .055, .22, .012));
+  settleSound(a, a.currentTime + .02);
 }
 export function ding(i) {
   if (!ST().sound) return; const a = ac(); if (!a) return;
