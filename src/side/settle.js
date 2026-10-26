@@ -1,7 +1,7 @@
 import { $, $$, EASE_OUT, REDUCED, SPRING, clamp, esc, fmtDur, fmtH, fmtT } from '../core/utils.js';
 import { CATS, CAT_IDS, SETTLE_TITLES, WD, addD, dateOf, kOf, md, mondayOf, today } from '../core/domain.js';
-import { MV, S, ST } from '../core/state.js';
-import { nowBox } from './now.js';
+import { MV, S, ST, commit } from '../core/state.js';
+import { nowBox, renderNow } from './now.js';
 import { E, closeEditor } from '../week/editor.js';
 import { M, closeModal } from '../ui/modal.js';
 import { openShutdown } from '../pages/rituals.js';
@@ -11,7 +11,6 @@ import { F, closeFocus } from '../ui/focus.js';
 import { ac, burst, chime, fxRun, parts, resolveColor, setFxRun, stepFx, tone } from '../fx/fx.js';
 
 /* ================= today settled: the payoff when every block of the day is painted ================= */
-export const LS_SETTLED = 'tuse-week-settled';
 export const settleEl = $('#settle');
 export let SETTLE = null, PILE = null;
 export function dayDone(date) {
@@ -45,6 +44,16 @@ export function settleAch(R) {
   if ((R.byCat.deep || 0) >= 120) a.push({ c: 'deep', ic: RIC.target, t: `专注 ${fmtH(R.byCat.deep)}h` });
   if (R.list.length >= 6) a.push({ c: 'learn', ic: RIC.check, t: `${R.list.length} 件事全部搞定` });
   return a.slice(0, 3);
+}
+// every block of today is painted, not settled yet: ask before the big moment (more blocks may still come)
+export function askCard(R) {
+  return `<div class="now-card settled ask" style="${settlePal(R.cats)}">
+      <div class="now-k">${RIC.spark}今天的都涂满了</div>
+      <h3>今天的任务都完成了吗？</h3>
+      <div class="sc-line">已涂色 <b>${fmtH(R.done)}</b> 小时 · <b>${R.list.length}</b> 块</div>
+      <div class="sc-strip">${R.list.map(b => `<i style="--c:var(--c-${b.c});flex:${b.e - b.s}"></i>`).join('')}</div>
+      <div class="now-act"><button class="btn on sc-go" data-act="settle">${RIC.star}结算</button><button class="btn on-ghost" data-act="more">还有事</button></div>
+    </div>`;
 }
 export function settledCard(R, shut) {
   return `<div class="now-card settled" style="${settlePal(R.cats)}">
@@ -106,6 +115,7 @@ export function fadeRain() { for (const p of parts) if (p.rain && !p.fade) { p.f
 /* the moment itself */
 export function openSettle() {
   const R = settleData(); if (!R.list.length) return;
+  if (!(S.core.settled && S.core.settled[R.t.key])) { S.core.settled = Object.assign({}, S.core.settled, { [R.t.key]: 1 }); commit('core'); renderNow(); }
   if (SETTLE) closeSettle(false, true);
   if (E) closeEditor(true);
   if (F) closeFocus();

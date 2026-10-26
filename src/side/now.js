@@ -7,7 +7,8 @@ import { toggleDone } from '../week/actions.js';
 import { scrollToMinute } from '../week/nav.js';
 import { openShutdown } from '../pages/rituals.js';
 import { openFocus } from '../ui/focus.js';
-import { openSettle, settleData, settledCard } from './settle.js';
+import { askCard, openSettle, settleData, settledCard } from './settle.js';
+import { openIbx } from '../inbox/float.js';
 import { toast } from '../ui/toast.js';
 
 /* ================= now card ================= */
@@ -19,7 +20,8 @@ export function renderNow() {
   const next = list.find(b => b.s > t.m);
   let html;
   const allDone = list.length > 0 && list.every(b => b.done);
-  if (allDone) html = settledCard(settleData(), !!S.core.shut[t.key]);
+  const settled = !!(S.core.settled && S.core.settled[t.key]);
+  if (allDone) html = settled ? settledCard(settleData(), !!S.core.shut[t.key]) : askCard(settleData());
   else if (cur) {
     const left = cur.e - t.m, frac = (t.m - cur.s) / (cur.e - cur.s);
     html = `<div class="now-card live" style="${cv(cur.c)}">
@@ -59,7 +61,7 @@ export function renderNow() {
       <p class="now-empty">在网格上拖出一个时间块。</p>
     </div>`;
   }
-  const nowKey = allDone ? 's' + !!S.core.shut[t.key] : cur ? 'c' + cur.id + cur.done : next ? 'n' + next.id : list.length ? 'e' + !!S.core.shut[t.key] : 'b';
+  const nowKey = allDone ? (settled ? 's' : 'a') + !!S.core.shut[t.key] : cur ? 'c' + cur.id + cur.done : next ? 'n' + next.id : list.length ? 'e' + !!S.core.shut[t.key] : 'b';
   const changed = renderNow.k !== undefined && renderNow.k !== nowKey; renderNow.k = nowKey;
   nowBox.innerHTML = html;
   if (changed && !REDUCED.matches) nowBox.firstElementChild.animate([{ opacity: 0, transform: 'translateY(10px) scale(.98)' }, { opacity: 1, transform: 'none' }], { duration: 520, easing: SPRING });
@@ -84,7 +86,8 @@ export function setup() {
     if (act === 'focus') openFocus(b.dataset.id);
     if (act === 'done') toggleDone(b.dataset.id, b);
     if (act === 'shut') openShutdown();
-    if (act === 'replay') openSettle();
+    if (act === 'replay' || act === 'settle') openSettle();
+    if (act === 'more') openIbx(true);
     if (act === 'fill') fillGap(b.dataset.tid);
   });
 }

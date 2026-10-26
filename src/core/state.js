@@ -37,7 +37,9 @@ export const stateOf = wk => JSON.stringify({ wk, week: S.weeks[wk] || null, cor
 export function snap(wk = V.wk) { undoStack.push(stateOf(wk)); if (undoStack.length > 60) undoStack.shift(); redoStack = []; }
 export function restoreState(o) {
   const prevSettings = JSON.stringify(ST());
-  S.core = normCore(o.core); if (o.week) S.weeks[o.wk] = normWeek(o.week);
+  // a settled day stays settled; undo only rewinds the edit itself
+  const settled = Object.assign({}, o.core && o.core.settled, S.core.settled);
+  S.core = normCore(o.core); S.core.settled = settled; if (o.week) S.weeks[o.wk] = normWeek(o.week);
   commit('core', o.wk);
   if (JSON.stringify(ST()) !== prevSettings) buildGrid();
   if (MV) { renderInbox(); renderMonth({ quiet: true }); if (o.wk === V.wk) { renderGoals(); refresh(); } }

@@ -1,14 +1,14 @@
 import { $, I, fmtDur, uid } from '../core/utils.js';
 import { CATS, WD, shiftWk, today } from '../core/domain.js';
-import { USER, V, W, commit, locate, snap, undo } from '../core/state.js';
+import { S, V, W, commit, locate, snap, undo } from '../core/state.js';
 import { blockEls, dhEls } from './dom.js';
 import { dayStats } from './dayheads.js';
 import { weekStats } from '../side/stats.js';
 import { refresh } from './refresh.js';
-import { lsGet, lsSet } from './drag.js';
 import { openReview } from '../pages/review.js';
 import { burst, celebrate, chime, plusLabel } from '../fx/fx.js';
-import { LS_SETTLED, openSettle } from '../side/settle.js';
+import { openSettle } from '../side/settle.js';
+import { nowBox } from '../side/now.js';
 import { toast } from '../ui/toast.js';
 
 /* ================= block actions ================= */
@@ -31,7 +31,13 @@ export function toggleDone(id, originEl) {
   try { navigator.vibrate && navigator.vibrate(10); } catch (er) {}
   const after = weekStats(loc.w).pct;
   const tt = today();
-  if (dayClear && loc.wk === tt.wk && loc.b.d === tt.d && lsGet(LS_SETTLED) !== USER + tt.key) { lsSet(LS_SETTLED, USER + tt.key); setTimeout(openSettle, 520); }
+  // today is fully painted: the sidebar card turns into the settle question; the big moment waits for 结算
+  if (dayClear && loc.wk === tt.wk && loc.b.d === tt.d && !(S.core.settled && S.core.settled[tt.key])) {
+    setTimeout(() => {
+      const c = nowBox.firstElementChild; if (c && c.offsetParent) { const r = c.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 34, 1.2); }
+      toast('今天的都涂满了', { icon: I.spark, action: { label: '结算', fn: openSettle } });
+    }, 420);
+  }
   else if (dayClear) {
     setTimeout(() => { const h = dhEls[loc.b.d]; if (loc.wk === V.wk && h.offsetParent) { const r = h.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 40, 1.2); } toast(`${WD[loc.b.d]}全部涂满`, { icon: I.spark }); }, 380);
   } else if (before < 100 && after === 100) { setTimeout(() => { burst(innerWidth / 2, innerHeight * .4, 70, 1.5); chime('big'); toast('整周涂满', { icon: I.spark, action: { label: '复盘', fn: openReview } }); }, 400); }
