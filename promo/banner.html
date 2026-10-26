@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>banner</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Noto+Sans+SC:wght@500;700;900&display=block">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:1280px;height:440px;overflow:hidden}
+body{--bg:#F4F3FA;--ink:#1B1932;--sub:#5E5A7A;--line:rgba(27,25,50,.07);--tile:#fff;font-family:"Noto Sans SC";background:var(--bg);color:var(--ink);position:relative;display:grid;place-items:center}
+body.dark{--bg:#0F0E19;--ink:#F1F0FA;--sub:#A9A6C4;--line:rgba(255,255,255,.07);--tile:#1C1B2B}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5}
+.dark .blob{opacity:.42}
+.b1{width:520px;height:520px;left:-140px;top:-240px;background:#5B78FF}
+.b2{width:460px;height:460px;right:-120px;top:-200px;background:#A577FF}
+.b3{width:520px;height:520px;left:34%;bottom:-430px;background:#FF5C85;opacity:.38}
+.b4{width:360px;height:360px;right:12%;bottom:-260px;background:#FFC94D;opacity:.42}
+.b5{width:360px;height:360px;left:4%;bottom:-260px;background:#3DDCA8;opacity:.38}
+/* a faint week grid of painted blocks behind the title */
+.grid{position:absolute;inset:34px 60px;display:grid;grid-template-columns:repeat(7,1fr);gap:14px;opacity:.55;-webkit-mask:radial-gradient(52% 95% at 50% 50%,transparent 46%,#000 80%);mask:radial-gradient(52% 95% at 50% 50%,transparent 46%,#000 80%)}
+.col{position:relative;border-left:1px solid var(--line)}
+.blk{position:absolute;left:6px;right:6px;border-radius:12px;background:color-mix(in oklab,var(--c) 18%,var(--bg));box-shadow:inset 0 0 0 1.5px color-mix(in oklab,var(--c) 38%,transparent)}
+.blk.p{background:linear-gradient(158deg,color-mix(in oklab,var(--c) 78%,#fff),var(--c) 60%);box-shadow:0 10px 22px -12px var(--c)}
+.mid{position:relative;text-align:center}
+.logo{display:inline-grid;grid-template-columns:repeat(2,auto);gap:9px}
+.logo i{width:50px;height:50px;border-radius:15px;box-shadow:0 14px 30px -14px currentColor}
+h1{margin:24px 0 0;font:900 84px/1 "Noto Sans SC";letter-spacing:.06em}
+.en{margin:16px 0 0;font:700 30px/1 "Bricolage Grotesque";background:linear-gradient(100deg,#3C5CFF,#8B5CFF 35%,#FF3B6B 68%,#FFB21A);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tag{margin:20px 0 0;font:500 20px/1.4 "Noto Sans SC";color:var(--sub);letter-spacing:.04em}
+</style>
+</head>
+<body>
+<i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i><i class="blob b4"></i><i class="blob b5"></i>
+<div class="grid" id="grid"></div>
+<div class="mid">
+  <div class="logo"><i style="background:#3C5CFF;color:#3C5CFF"></i><i style="background:#FFB21A;color:#FFB21A"></i><i style="background:#FF3B6B;color:#FF3B6B"></i><i style="background:#22C993;color:#22C993"></i></div>
+  <h1>涂色周历</h1>
+  <p class="en">Paint Your Week</p>
+  <p class="tag">把一周排成时间块，做完一块，就把它涂上颜色</p>
+</div>
+<script>
+if (location.search === '?dark') document.body.classList.add('dark');
+const C = ['#3C5CFF', '#8B5CFF', '#FFB21A', '#22C993', '#FF3B6B', '#FF8A3D'];
+let s = 5; const r = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+const g = document.getElementById('grid');
+for (let d = 0; d < 7; d++) {
+  const col = document.createElement('div'); col.className = 'col'; g.appendChild(col);
+  let y = r() * 30;
+  while (y < 330) { const h = 34 + r() * 70; if (y + h > 372) break; const b = document.createElement('i'); b.className = 'blk' + (r() < .55 ? ' p' : ''); b.style.cssText = `top:${y}px;height:${h}px;--c:${C[Math.floor(r() * C.length)]}`; col.appendChild(b); y += h + 10 + r() * 26; }
+}
+</script>
+</body>
+</html>
