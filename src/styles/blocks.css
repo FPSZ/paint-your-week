@@ -53,6 +53,8 @@ kbd{font:600 11.5px/1 var(--f-mono);padding:4px 7px;border-radius:6px;background
 .slot{position:absolute;left:3px;right:3px;z-index:2;border-radius:11px;border:1.5px dashed color-mix(in oklab,var(--c) 70%,transparent);background:color-mix(in oklab,var(--c) 7%,transparent);pointer-events:none;transition:top .16s var(--ease-out),height .16s var(--ease-out)}
 .blk.floating.timed .bm{opacity:1;font-weight:700}
 .task.floating.timed .t-est{font-weight:700;color:color-mix(in oklab,var(--c) 80%,var(--ink));opacity:1}
+.slot.mag{border-style:solid;border-color:var(--c);box-shadow:0 0 0 3px color-mix(in oklab,var(--c) 16%,transparent)}
+.cols.edge-rs,.cols.edge-rs .col,.cols.edge-rs .blk{cursor:ns-resize}
 .slot span{position:absolute;left:8px;top:5px;font:600 10.5px/1 var(--f-mono);color:color-mix(in oklab,var(--c) 75%,var(--ink));font-variant-numeric:tabular-nums}
 .task.floating{background:var(--surface);position:fixed;left:0;top:0;z-index:300;pointer-events:none;box-shadow:0 22px 44px -18px rgba(27,25,50,.45);transition:width .25s var(--spring),height .25s var(--spring),border-radius .25s,background .25s}
 .task.floating.as-block{border-radius:11px;background:color-mix(in oklab,var(--c) 16%,var(--surface));align-items:flex-start;padding-top:7px}

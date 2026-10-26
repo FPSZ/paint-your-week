@@ -106,8 +106,8 @@ export function setup() {
   edTitle.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); closeEditor(); } });
   edCue.addEventListener('input', () => editBlock(b => { b.q = edCue.value; }));
   edCue.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); closeEditor(); } });
-  edStart.addEventListener('change', () => { const v = toM(edStart.value); if (!edStart.value) return; editBlock(b => { const dur = b.e - b.s; b.s = clamp(Math.round(v / 15) * 15, 0, 1425); b.e = Math.min(b.s + dur, 1440); }, { flip: true }); });
-  edEnd.addEventListener('change', () => { if (!edEnd.value) return; let v = toM(edEnd.value); editBlock(b => { if (v === 0) v = 1440; v = Math.round(v / 15) * 15; b.e = v <= b.s ? Math.min(b.s + 15, 1440) : v; }, { flip: true }); });
+  edStart.addEventListener('change', () => { const v = toM(edStart.value); if (!edStart.value) return; editBlock(b => { const dur = b.e - b.s; b.s = clamp(v, 0, 1435); b.e = Math.min(b.s + dur, 1440); }, { flip: true }); });
+  edEnd.addEventListener('change', () => { if (!edEnd.value) return; let v = toM(edEnd.value); editBlock(b => { if (v === 0) v = 1440; b.e = v <= b.s ? Math.min(b.s + 5, 1440) : v; }, { flip: true }); });
   $('#edCats').addEventListener('click', e => { const c = e.target.closest('.cchip'); if (c) editBlock(b => { b.c = c.dataset.c; }); });
   $('#edDays').addEventListener('click', e => { const c = e.target.closest('.dchip'); if (c) editBlock(b => { b.d = +c.dataset.d; if (MOBILE.matches) V.sel = b.d; }, { flip: true }); });
   $('#edDurs').addEventListener('click', e => { const c = e.target.closest('.durchip'); if (c) editBlock(b => { b.e = Math.min(b.s + +c.dataset.m, 1440); }, { flip: true }); });

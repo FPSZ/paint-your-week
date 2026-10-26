@@ -33,14 +33,36 @@ export function showGhost(d, s, e, c, prefix = '') {
   ghost.firstChild.textContent = `${prefix}${fmtT(s)} – ${fmtT(e)}`;
   ghost.hidden = false;
 }
-// a block edge within a few pixels of the pointer, for grabbing it from just outside the block
+function magnetized(on) {
+  if (on && !ghost.classList.contains('mag')) { try { navigator.vibrate && navigator.vibrate(5); } catch (e) {} }
+  ghost.classList.toggle('mag', !!on);
+}
+// the block edge nearest the pointer in this column, if one is close enough to grab.
+// Looks at every block, not just the one under the pointer, so the bottom of a block that has another one
+// right below it can still be grabbed; on a tie the bottom edge wins (stretching down is the common case).
 export function edgeAt(col, x, y) {
+  let best = null, bd = Infinity;
   for (const blk of col.querySelectorAll('.blk')) {
+    if (blk.classList.contains('draft')) continue;
     const r = blk.getBoundingClientRect(); if (x < r.left || x > r.right) continue;
-    if (y >= r.bottom - 1 && y <= r.bottom + 7) return { blk, top: false };
-    if (y <= r.top + 1 && y >= r.top - 7 && !blk.classList.contains('xs')) return { blk, top: true };
+    const small = r.height < 30;
+    if (y >= r.bottom - (small ? 6 : 11) && y <= r.bottom + 7) { const dd = Math.abs(y - r.bottom); if (dd <= bd) { bd = dd; best = { blk, top: false }; } }
+    if (!small && y >= r.top - 7 && y <= r.top + 8 && x < r.right - 28) { const dd = Math.abs(y - r.top); if (dd < bd) { bd = dd; best = { blk, top: true }; } }
   }
-  return null;
+  return best;
+}
+// times pull toward neighbouring blocks' start/end (within ~12px), otherwise to the 15-minute grid
+export function magnet(m, d, skipId) {
+  const tol = 12 / HH() * 60; let best = null, bd = tol;
+  for (const b of W().blocks) { if (b.d !== d || b.id === skipId) continue; for (const x of [b.s, b.e]) { const dd = Math.abs(x - m); if (dd < bd) { bd = dd; best = x; } } }
+  return best == null ? { m: snap15(m), mag: false } : { m: best, mag: true };
+}
+// a block of length dur whose top is near `raw`: snap whichever of its two edges is closer to a neighbour
+function magnetSpan(raw, dur, d, skipId) {
+  const a = magnet(raw, d, skipId), z = magnet(raw + dur, d, skipId);
+  if (a.mag && (!z.mag || Math.abs(a.m - raw) <= Math.abs(z.m - raw - dur))) return a;
+  if (z.mag) return { m: z.m - dur, mag: true };
+  return a;
 }
 export function hideGhost() { ghost.hidden = true; ghost.remove(); }
 // the time line on the floating copy follows the drop target; null puts the original text back
@@ -94,19 +116,19 @@ export function update() {
   const st = ST(); const startM = st.startH * 60, endM = st.endH * 60;
   if (D.kind === 'move') {
     const d = colAtX(D.x, false); const top = D.y - D.offY;
-    let s = snap15(minuteAtY(top, d)); s = clamp(s, startM, endM - D.dur);
-    D.tgt = { d, s }; showGhost(d, s, s + D.dur, D.cat, D.copy ? '复制 · ' : '');
+    const g = magnetSpan(minuteAtY(top, d), D.dur, d, D.copy ? null : D.id); const s = clamp(g.m, startM, endM - D.dur);
+    D.tgt = { d, s }; showGhost(d, s, s + D.dur, D.cat, D.copy ? '复制 · ' : ''); magnetized(g.mag);
     flTime(D, `${d !== D.d0 ? WD[d] + ' ' : ''}${fmtT(s)}–${fmtT(s + D.dur)}`);
   } else if (D.kind === 'resize-top') {
     const b = curBlock(D.id); if (!b) return;
-    const m = clamp(snap15(minuteAtY(D.y, b.d)), startM, b.e - 15);
+    const m = clamp(magnet(minuteAtY(D.y, b.d), b.d, b.id).m, startM, b.e - 5);
     if (m !== b.s) { b.s = m; const hh = HH(); const h = (b.e - b.s) / 60 * hh; D.el.style.top = (b.s - startM) / 60 * hh + 'px'; D.el.style.height = Math.max(h - 2, 14) + 'px'; $('.bm', D.el).textContent = `${fmtT(b.s)}–${fmtT(b.e)} · ${fmtDur(b.e - b.s)}`; D.el.classList.toggle('xs', h < 32); D.el.classList.toggle('sm', h >= 32 && h < 56); }
   } else if (D.kind === 'resize') {
     const b = curBlock(D.id); if (!b) return;
-    const m = clamp(snap15(minuteAtY(D.y, b.d)), b.s + 15, endM);
+    const m = clamp(magnet(minuteAtY(D.y, b.d), b.d, b.id).m, b.s + 5, endM);
     if (m !== b.e) { b.e = m; const hh = HH(); D.el.style.height = Math.max((b.e - b.s) / 60 * hh - 2, 14) + 'px'; $('.bm', D.el).textContent = `${fmtT(b.s)}–${fmtT(b.e)} · ${fmtDur(b.e - b.s)}`; D.el.classList.toggle('xs', (b.e - b.s) / 60 * hh < 32); D.el.classList.toggle('sm', (b.e - b.s) / 60 * hh >= 32 && (b.e - b.s) / 60 * hh < 56); }
   } else if (D.kind === 'create') {
-    const m = snap15(minuteAtY(D.y, D.d));
+    const m = magnet(minuteAtY(D.y, D.d), D.d).m;
     let s = Math.min(D.s0, m), e = Math.max(D.s0 + 15, m); s = clamp(s, startM, endM - 15); e = clamp(e, s + 15, endM);
     D.cs = s; D.ce = e; const hh = HH();
     D.draft.style.top = (s - startM) / 60 * hh + 'px'; D.draft.style.height = Math.max((e - s) / 60 * hh - 2, 14) + 'px';
@@ -118,8 +140,8 @@ export function update() {
     const over = d !== null && D.y > sr.top && D.y < sr.bottom;
     if (over) {
       const est = D.task.est; const top = D.y - 14;
-      let s = snap15(minuteAtY(top, d)); s = clamp(s, startM, endM - est);
-      D.tgt = { d, s }; showGhost(d, s, Math.min(s + est, endM), D.task.c);
+      const g = magnetSpan(minuteAtY(top, d), est, d); const s = clamp(g.m, startM, endM - est);
+      D.tgt = { d, s }; showGhost(d, s, Math.min(s + est, endM), D.task.c); magnetized(g.mag);
       flTime(D, `${WD[d]} ${fmtT(s)}–${fmtT(Math.min(s + est, endM))}`);
       if (!D.asBlock) { D.asBlock = true; const cw = colEls[d].getBoundingClientRect().width - 6; D.fl.classList.add('as-block'); D.fl.style.width = Math.max(cw, 120) + 'px'; D.fl.style.height = Math.max(est / 60 * HH() - 2, 30) + 'px'; D.offX = 20; D.offY = 14; }
     } else {
@@ -247,13 +269,22 @@ export function pasteBlock() {
 export function setup() {
   colsBox.addEventListener('pointermove', e => {
     if (DRAG || e.pointerType !== 'mouse') return;
-    const col = e.target.closest('.col'); if (!col) return;
-    col.style.cursor = !e.target.closest('.blk') && edgeAt(col, e.clientX, e.clientY) ? 'ns-resize' : '';
+    const col = e.target.closest('.col');
+    colsBox.classList.toggle('edge-rs', !!(col && !e.target.closest('.chk') && edgeAt(col, e.clientX, e.clientY)));
   });
   colsBox.addEventListener('pointerdown', e => {
     if (e.button > 0 || DRAG) return;
     const blk = e.target.closest('.blk');
     const touch = e.pointerType !== 'mouse';
+    const ecol = !touch && !e.target.closest('.chk') && e.target.closest('.col');
+    const near = ecol && edgeAt(ecol, e.clientX, e.clientY);
+    if (near) {
+      const b = curBlock(near.blk.dataset.id);
+      if (b) {
+        DRAG = { kind: near.top ? 'resize-top' : 'resize', id: b.id, el: near.blk, pid: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, touch, active: false, rect: near.blk.getBoundingClientRect(), tilt: 0, px: e.clientX };
+        e.preventDefault(); return;
+      }
+    }
     if (blk) {
       if (e.target.closest('.chk')) return;
       const b = curBlock(blk.dataset.id); if (!b) return;
@@ -264,14 +295,8 @@ export function setup() {
     } else {
       const col = e.target.closest('.col'); if (!col) return;
       if (performance.now() - (V.suppress || 0) < 80) return;
-      const near = !touch && edgeAt(col, e.clientX, e.clientY);
-      if (near) {
-        const b = curBlock(near.blk.dataset.id); if (!b) return;
-        DRAG = { kind: near.top ? 'resize-top' : 'resize', id: b.id, el: near.blk, pid: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, touch, active: false, rect: near.blk.getBoundingClientRect(), tilt: 0, px: e.clientX };
-        e.preventDefault(); return;
-      }
-      const d = +col.dataset.d;
-      DRAG = { kind: touch ? 'tap' : 'create', d, pid: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, touch, active: false, t0: performance.now(), s0: Math.floor(minuteAtY(e.clientY, d) / 15) * 15 };
+      const d = +col.dataset.d, y0 = minuteAtY(e.clientY, d), g = magnet(y0, d);
+      DRAG = { kind: touch ? 'tap' : 'create', d, pid: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, touch, active: false, t0: performance.now(), s0: g.mag ? g.m : Math.floor(y0 / 15) * 15 };
       if (!touch) e.preventDefault();
     }
     if (touch && DRAG.kind === 'move') DRAG.lp = setTimeout(() => { if (DRAG && !DRAG.active && DRAG.kind === 'move') { activate(); try { navigator.vibrate && navigator.vibrate(8); } catch (er) {} } }, 280);
