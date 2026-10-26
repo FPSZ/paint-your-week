@@ -1,0 +1,25 @@
+/* ---------- focus ---------- */
+.focus{position:fixed;inset:0;z-index:500;display:grid;place-items:center;padding:24px;background:var(--bg);overflow:hidden}
+.focus[hidden]{display:none}
+.focus::before{content:"";position:absolute;inset:-20%;background:radial-gradient(circle at 30% 25%,color-mix(in oklab,var(--c) 30%,transparent),transparent 55%),radial-gradient(circle at 75% 80%,color-mix(in oklab,var(--c) 18%,transparent),transparent 50%);animation:breathe 8s ease-in-out infinite alternate}
+@keyframes breathe{to{transform:scale(1.08) rotate(4deg)}}
+.f-in{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:520px;width:100%}
+.f-cat{font:600 11.5px/1 var(--f-body);letter-spacing:.14em;color:color-mix(in oklab,var(--c) 70%,var(--ink))}
+.f-title{font:900 clamp(24px,4.4vw,36px)/1.3 var(--f-body);margin:12px 0 0;text-wrap:balance;word-break:break-all}
+.f-meta{margin:8px 0 30px;font:500 13px var(--f-mono);color:var(--muted)}
+.f-next{margin:14px 0 0;font-size:13px;color:var(--muted)}
+.f-next b{color:var(--ink-2);font-weight:700}
+.f-ring .k{stroke:color-mix(in oklab,var(--ink) 16%,transparent);stroke-width:3.5;stroke-dasharray:1.1 7.4886}
+.focus .btn.soft{background:color-mix(in oklab,var(--c) 14%,transparent);color:color-mix(in oklab,var(--c) 70%,var(--ink))}
+.focus .btn.soft:hover{background:color-mix(in oklab,var(--c) 22%,transparent)}
+.f-ring{position:relative;width:min(320px,74vw);aspect-ratio:1}
+.f-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.f-ring circle{fill:none;stroke-width:6}
+.f-ring .t{stroke:color-mix(in oklab,var(--c) 14%,transparent)}
+.f-ring .p{stroke:var(--c);stroke-linecap:round;transition:stroke-dashoffset .4s linear;filter:drop-shadow(0 0 8px color-mix(in oklab,var(--c) 45%,transparent))}
+.f-time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.f-time b{font:600 clamp(42px,9vw,60px)/1 var(--f-display);letter-spacing:-.03em;font-variant-numeric:tabular-nums;font-variation-settings:"opsz" 96}
+.f-time span{font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:.08em}
+.f-cue{margin:24px 0 0;font-size:14px;color:var(--ink-2);line-height:1.6;max-width:42ch}
+.f-acts{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap;justify-content:center}
+.f-note{margin:22px 0 0;font-size:11.5px;color:var(--muted)}

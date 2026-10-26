@@ -1,0 +1,58 @@
+/* ---------- blocks ---------- */
+.blk{position:absolute;z-index:1;border-radius:11px;overflow:hidden;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y;-webkit-tap-highlight-color:transparent;
+  background:color-mix(in oklab,var(--c) var(--tint),var(--surface));
+  box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--c) var(--tint-line),transparent);
+  color:color-mix(in oklab,var(--c) var(--tint-ink),var(--ink));
+  transition:box-shadow .25s,color .3s .12s,translate .3s var(--spring),opacity .25s,--c .5s var(--ease-out),--on .5s var(--ease-out)}
+.blk:hover{box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--c) 55%,transparent),0 8px 20px -12px color-mix(in oklab,var(--c) 75%,transparent)}
+.blk .flood{position:absolute;inset:0;background:linear-gradient(158deg,color-mix(in oklab,var(--c) 78%,#fff) 0%,var(--c) 46%,color-mix(in oklab,var(--c) 84%,#000) 108%);clip-path:circle(0px at calc(100% - 15px) 15px);transition:clip-path .65s var(--ease-out)}
+.blk .flood::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.22),transparent 38%)}
+.blk.done{color:var(--on);box-shadow:0 10px 22px -14px color-mix(in oklab,var(--c) 85%,transparent)}
+.blk.done .flood{clip-path:circle(160% at calc(100% - 15px) 15px)}
+.blk.late:not(.done){outline:1.5px dashed color-mix(in oklab,var(--c) 55%,transparent);outline-offset:-1.5px}
+.blk.editing{box-shadow:0 0 0 2px var(--surface),0 0 0 4px color-mix(in oklab,var(--c) 70%,transparent)}
+.bin{position:relative;display:flex;flex-direction:column;gap:1px;height:100%;min-width:0;padding:6px 28px 6px 9px}
+.bt{font-weight:700;font-size:12.5px;line-height:1.28;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-all}
+.bm{font:500 10.5px/1.35 var(--f-mono);opacity:.78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.bq{font-size:11px;line-height:1.4;opacity:.75;margin-top:3px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.bg-goal{display:inline-block;width:6px;height:6px;border-radius:2px;background:currentColor;margin-right:5px;vertical-align:1px;opacity:.8}
+.chk{position:absolute;top:4px;right:4px;width:22px;height:22px;padding:0;border:0;border-radius:50%;background:transparent;display:grid;place-items:center;cursor:pointer;color:inherit;transition:transform .3s var(--spring)}
+.chk:hover{transform:scale(1.14)}
+.chk:active{transform:scale(.86)}
+.chk svg{width:18px;height:18px;overflow:visible}
+.chk circle{fill:color-mix(in oklab,var(--surface) 75%,transparent);stroke:currentColor;stroke-width:1.6;opacity:.85;transition:fill .3s}
+.chk path{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:16;stroke-dashoffset:16;transition:stroke-dashoffset .35s .18s var(--ease-out)}
+.blk.done .chk circle{fill:rgba(255,255,255,.22)}
+.blk.done .chk path{stroke-dashoffset:0}
+.rsz{position:absolute;left:0;right:0;bottom:0;height:11px;cursor:ns-resize}
+.rsz::after{content:"";position:absolute;left:50%;bottom:3px;width:18px;height:3px;border-radius:2px;background:currentColor;opacity:0;transform:translateX(-50%);transition:opacity .2s}
+.blk:hover .rsz::after{opacity:.4}
+.rsz-t{top:0;bottom:auto;right:30px}
+.rsz-t::after{top:3px;bottom:auto;left:calc(50% + 15px)}
+.blk.xs .rsz-t{display:none}
+.blk.dimmed{opacity:.32}
+.dup-badge{position:absolute;right:6px;bottom:6px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:var(--on);font:700 15px/1 var(--f-display);box-shadow:0 0 0 2px var(--surface);transform:scale(0);transition:transform .35s var(--spring)}
+.blk.copying .dup-badge{transform:scale(1)}
+.blk.xs .dup-badge{width:16px;height:16px;font-size:12px;bottom:auto;top:50%;margin-top:-8px;right:26px}
+.keys{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:12px 22px;align-items:center;margin:6px 0 0}
+.keys dt{display:flex;align-items:center;gap:4px;flex-wrap:wrap;color:var(--muted);font-size:12px}
+.keys dd{margin:0;font-size:13px;color:var(--ink-2)}
+kbd{font:600 11.5px/1 var(--f-mono);padding:4px 7px;border-radius:6px;background:var(--surface-2);color:var(--ink);box-shadow:inset 0 -1px 0 var(--line-2)}
+.blk.sm .bin{padding-block:3px;gap:0}
+.blk.sm .bt{-webkit-line-clamp:1}
+.blk.sm .bq{display:none}
+.blk.xs .bin{flex-direction:row;align-items:center;gap:6px;padding:0 24px 0 7px}
+.blk.xs .bt{display:block;white-space:nowrap;text-overflow:ellipsis;font-size:11px}
+.blk.xs .bm,.blk.xs .bq{display:none}
+.blk.xs .chk{top:50%;width:18px;height:18px;margin-top:-9px;right:3px}
+.blk.xs .chk svg{width:14px;height:14px}
+.blk.floating{position:fixed;left:0;top:0;z-index:300;cursor:grabbing;transition:box-shadow .25s,width .25s var(--spring),height .25s var(--spring);pointer-events:none;translate:none}
+.blk.lifted{box-shadow:0 26px 48px -18px color-mix(in oklab,var(--c) 55%,rgba(0,0,0,.45)),inset 0 0 0 1px color-mix(in oklab,var(--c) 50%,transparent)}
+.blk.resizing{cursor:ns-resize;z-index:5}
+.blk.draft{opacity:.92;pointer-events:none;z-index:4;box-shadow:inset 0 0 0 1.5px color-mix(in oklab,var(--c) 60%,transparent)}
+.slot{position:absolute;left:3px;right:3px;z-index:2;border-radius:11px;border:1.5px dashed color-mix(in oklab,var(--c) 70%,transparent);background:color-mix(in oklab,var(--c) 7%,transparent);pointer-events:none;transition:top .16s var(--ease-out),height .16s var(--ease-out)}
+.blk.floating.timed .bm{opacity:1;font-weight:700}
+.task.floating.timed .t-est{font-weight:700;color:color-mix(in oklab,var(--c) 80%,var(--ink));opacity:1}
+.slot span{position:absolute;left:8px;top:5px;font:600 10.5px/1 var(--f-mono);color:color-mix(in oklab,var(--c) 75%,var(--ink));font-variant-numeric:tabular-nums}
+.task.floating{background:var(--surface);position:fixed;left:0;top:0;z-index:300;pointer-events:none;box-shadow:0 22px 44px -18px rgba(27,25,50,.45);transition:width .25s var(--spring),height .25s var(--spring),border-radius .25s,background .25s}
+.task.floating.as-block{border-radius:11px;background:color-mix(in oklab,var(--c) 16%,var(--surface));align-items:flex-start;padding-top:7px}

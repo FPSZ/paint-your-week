@@ -1,0 +1,47 @@
+/* ---------- popover editor ---------- */
+.pop{transition:--c .45s var(--ease-out),--on .45s var(--ease-out);position:fixed;z-index:200;width:360px;max-width:calc(100vw - 24px);background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-pop);padding:18px 18px 14px;max-height:calc(100dvh - 24px);overflow:auto}
+.pop[hidden]{display:none}
+.pop-hd{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ed-sw{width:12px;height:12px;flex:none;border-radius:4px;background:var(--c);box-shadow:0 0 0 4px color-mix(in oklab,var(--c) 18%,transparent);transition:background .3s,box-shadow .3s}
+.ed-title{flex:1;min-width:0;border:0;background:transparent;font:800 18px/1.35 var(--f-body);padding:4px 0;outline:none;letter-spacing:.01em}
+.ed-title::placeholder{color:var(--muted);font-weight:600}
+.ed-r{display:grid;grid-template-columns:36px minmax(0,1fr);align-items:start;column-gap:10px}
+.ed-r[hidden]{display:none}
+.ed-k{font-size:12px;line-height:38px;color:var(--muted);letter-spacing:.06em}
+.ed-v{display:flex;flex-wrap:wrap;align-items:center;gap:0 2px;min-width:0;min-height:38px}
+#edCats{display:grid;grid-template-columns:repeat(3,max-content);column-gap:4px;padding-block:2px}
+.cchip{display:inline-flex;align-items:center;gap:9px;height:32px;padding:0 7px;border:0;border-radius:8px;background:transparent;font-size:13px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:color .2s}
+.cchip i{width:8px;height:8px;border-radius:50%;background:var(--c);transition:transform .3s var(--spring),box-shadow .25s}
+.cchip:hover{color:var(--ink)}
+.cchip.on{color:color-mix(in oklab,var(--c) 72%,var(--ink));font-weight:700}
+.cchip.on i{transform:scale(1.15);box-shadow:0 0 0 2.5px var(--surface),0 0 0 4px var(--c)}
+.dchip{width:30px;height:30px;border:0;border-radius:50%;background:transparent;font-size:13px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:background .25s,color .25s,transform .3s var(--spring)}
+.dchip:hover{color:var(--ink)}
+.dchip:active{transform:scale(.9)}
+.dchip.on{background:var(--c);color:var(--on);font-weight:700}
+.ed-time input{height:32px;width:auto;border:0;border-bottom:1.5px solid transparent;border-radius:0;background:transparent;padding:0 1px;font:600 16px var(--f-mono);color:var(--ink);font-variant-numeric:tabular-nums;outline:none;transition:border-color .2s}
+.ed-time input:hover{border-bottom-color:var(--line-2)}
+.ed-time input:focus{border-bottom-color:var(--c)}
+.ed-time input::-webkit-calendar-picker-indicator{display:none}
+.ed-time .arrow{color:var(--muted);margin:0 6px}
+.ed-dur{margin-left:auto;font:500 12px var(--f-mono);color:var(--muted)}
+.durchip{height:28px;padding:0 7px;border:0;border-radius:7px;background:transparent;font:500 12px var(--f-mono);color:var(--muted);cursor:pointer;transition:color .2s}
+.durchip:hover{color:var(--ink)}
+.durchip.on{color:color-mix(in oklab,var(--c) 72%,var(--ink));font-weight:700}
+.ed-input{width:100%;border:0;border-bottom:1px solid var(--line-2);border-radius:0;background:transparent;padding:7px 0;font-size:13px;color:var(--ink);outline:none;transition:border-color .2s}
+.ed-input:focus{border-bottom-color:var(--c,var(--accent))}
+.ed-input::placeholder{color:var(--muted)}
+.ed-goals{display:flex;flex-wrap:wrap;gap:0 2px}
+.gchip{max-width:100%;height:28px;padding:0 7px;border:0;border-radius:7px;background:transparent;font-size:12.5px;color:var(--ink-2);cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:color .2s}
+.gchip:hover{color:var(--ink)}
+.gchip.on{color:color-mix(in oklab,var(--c,var(--accent)) 72%,var(--ink));font-weight:700}
+#edGoals .gchip::before{content:"";display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:2.5px;border:1.5px solid currentColor;vertical-align:0;transition:background .2s}
+#edGoals .gchip.on::before{background:currentColor}
+.ed-hint{display:flex;gap:9px;margin:10px 0 0;font-size:12px;line-height:1.6;color:var(--ink-2)}
+.ed-hint::before{content:"";flex:none;width:6px;height:6px;margin-top:7px;border-radius:50%;background:var(--gold)}
+.ed-hint.good::before{background:var(--c-move)}
+.ed-hint[hidden]{display:none}
+.pop-ft{display:flex;align-items:center;gap:2px;margin-top:16px}
+.pop-ft .sp{flex:1}
+.ed-act.danger{color:var(--c-life)}
+.ed-act.danger:hover{background:color-mix(in oklab,var(--c-life) 10%,transparent)}

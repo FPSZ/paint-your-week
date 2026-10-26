@@ -1,0 +1,23 @@
+/* ---------- the gap before the next block ---------- */
+.now-card.gap{background:radial-gradient(90% 85% at 100% 0%,color-mix(in oklab,var(--c) 22%,transparent),transparent 70%),color-mix(in oklab,var(--c) 7%,var(--surface));box-shadow:var(--shadow-1),inset 0 0 0 1px color-mix(in oklab,var(--c) 16%,transparent)}
+.gap-row{display:flex;align-items:center;gap:15px}
+.gap-ring{position:relative;isolation:isolate;flex:none;width:70px;height:70px}
+.gap-ring::before{content:"";position:absolute;inset:-8px;z-index:-1;border-radius:50%;background:radial-gradient(circle,color-mix(in oklab,var(--c) 26%,transparent),transparent 68%);animation:breathe 4.5s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.14);opacity:.45}}
+.gap-ring svg{width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.gap-ring circle{fill:none;stroke-width:5}
+.gap-ring .t{stroke:color-mix(in oklab,var(--c) 15%,transparent)}
+.gap-ring .p{stroke:var(--c);stroke-linecap:round;transition:stroke-dashoffset 1s var(--ease-out);filter:drop-shadow(0 0 5px color-mix(in oklab,var(--c) 45%,transparent))}
+.gap-ring span{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;color:color-mix(in oklab,var(--c) 75%,var(--ink))}
+.gap-ring b{font:700 23px/1 var(--f-display);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.gap-ring small{margin-top:3px;font:600 10px/1 var(--f-mono);opacity:.8}
+.gap-txt{min-width:0}
+.now-card.gap .now-k{color:color-mix(in oklab,var(--c) 55%,var(--muted));opacity:1}
+.now-card.gap h3{margin:5px 0 3px;color:color-mix(in oklab,var(--c) 72%,var(--ink))}
+.now-card.gap .now-time{color:var(--muted);opacity:1}
+.now-card.gap .now-act{margin-top:15px}
+.gap-fill{min-width:0;flex:0 1 auto;background:color-mix(in oklab,var(--c) 12%,transparent);color:color-mix(in oklab,var(--c) 75%,var(--ink))}
+.gap-fill:hover{background:color-mix(in oklab,var(--c) 19%,transparent)}
+.gap-fill .ic{width:15px;height:15px;stroke-width:2.2}
+.gap-fill span{overflow:hidden;text-overflow:ellipsis}
+.gap-fill small{flex:none;font:600 11px/1 var(--f-mono);opacity:.75}

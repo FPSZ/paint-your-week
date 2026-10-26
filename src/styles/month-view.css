@@ -1,0 +1,84 @@
+/* ---------- month view: same skeleton as the week (summary left, calendar right) ---------- */
+.app.month #side,.app.month #cal{display:none}
+.mview{display:contents}
+.mv-side{grid-area:side;min-height:0;min-width:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:34px;padding:8px 4px 8px 2px;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+.mv-side > *{opacity:0;transform:translateY(12px)}
+.mview.in .mv-side > *{opacity:1;transform:none;transition:opacity .6s var(--ease-out) calc(var(--i,0) * 70ms + 60ms),transform .8s var(--spring) calc(var(--i,0) * 70ms + 60ms),background .2s}
+.mvs-k{margin:0;font:600 11.5px/1 var(--f-mono);color:var(--muted);letter-spacing:.04em}
+.mvs-big{display:flex;align-items:baseline;gap:10px;margin-top:14px}
+.mvs-big b{font:700 66px/.86 var(--f-display);letter-spacing:-.05em;font-variant-numeric:tabular-nums;font-variation-settings:"opsz" 96}
+.mvs-big span{font-size:13px;font-weight:700;color:var(--ink-2)}
+.mvs-bar{display:flex;gap:2px;height:10px;margin-top:20px;border-radius:5px;overflow:hidden;background:color-mix(in oklab,var(--ink) 6%,transparent)}
+.mvs-bar i{width:0;background:var(--c);transition:width 1.1s var(--spring) calc(var(--i,0) * 80ms + 260ms)}
+.mview.in .mvs-bar i{width:var(--w)}
+.mvs-rate{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:9px;font:500 11.5px var(--f-mono);color:var(--muted)}
+.mvs-rate b{font:700 14px var(--f-display);color:var(--ink);margin-left:3px}
+.mvs-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 14px;margin:0}
+.mvs-stats dt{font-size:11px;color:var(--muted);letter-spacing:.06em}
+.mvs-stats dd{margin:6px 0 0;font:700 23px/1 var(--f-display);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.mvs-stats dd small{font:500 11px var(--f-mono);color:var(--muted);margin-left:2px;letter-spacing:0}
+.mvs-h{margin:0 0 14px;font:800 13.5px/1.2 var(--f-body);letter-spacing:.04em}
+.mvs-cats{display:grid;grid-template-columns:max-content minmax(0,1fr) max-content;gap:12px 12px;align-items:center}
+.mc-n{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.mc-n i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.mc-t{position:relative;height:6px;border-radius:3px;background:color-mix(in oklab,var(--ink) 5%,transparent)}
+.mc-t b,.mc-t i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:3px}
+.mc-t b{background:color-mix(in oklab,var(--c) 26%,transparent);transition:width .8s var(--ease-out) calc(var(--i,0) * 70ms + 300ms)}
+.mc-t i{background:var(--c);transition:width 1.1s var(--spring) calc(var(--i,0) * 70ms + 420ms)}
+.mview.in .mc-t b{width:var(--pw)}
+.mview.in .mc-t i{width:var(--dw)}
+.mc-h{font:500 11.5px var(--f-mono);color:var(--ink-2);text-align:right;font-variant-numeric:tabular-nums}
+.mc-h small{font:inherit;color:var(--muted)}
+.mvs-go{display:flex;align-items:center;gap:10px;width:100%;height:50px;padding:0 16px;border:0;border-radius:15px;background:color-mix(in oklab,var(--accent) 10%,transparent);color:var(--accent-ink);font-size:14px;font-weight:800;cursor:pointer}
+.mvs-go:hover{background:color-mix(in oklab,var(--accent) 16%,transparent)}
+.mvs-go:active{scale:.98}
+.mvs-go small{margin-left:auto;font:600 11.5px var(--f-mono);opacity:.85}
+.mvs-go .arr{width:16px;height:16px;transition:transform .35s var(--spring)}
+.mvs-go:hover .arr{transform:translateX(3px)}
+.mvs-go small + .arr{margin-left:0}
+.mvs-go span + .arr{margin-left:auto}
+
+.mv-cal{grid-area:cal;position:relative;min-height:0;min-width:0;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-1);overflow:hidden}
+.mv-head{display:grid;grid-template-columns:var(--gw) repeat(7,minmax(0,1fr));border-bottom:1px solid var(--line)}
+.mv-head span{padding:13px 12px 11px;font-size:11.5px;font-weight:500;color:var(--muted);letter-spacing:.1em;border-left:1px solid var(--line)}
+.mv-head span:first-child{border-left:0}
+.mv-head em{font-style:normal}
+.mv-grid{flex:1;min-height:0;display:grid;grid-template-columns:var(--gw) repeat(7,minmax(0,1fr));grid-template-rows:repeat(var(--rows,5),minmax(0,1fr))}
+.mv-wk{display:flex;flex-direction:column;align-items:center;gap:9px;padding:12px 0 0;border:0;border-top:1px solid var(--line);background:transparent;font:600 11px/1 var(--f-mono);color:var(--muted);cursor:pointer;transition:background .2s,color .2s}
+.mv-wk:hover{background:color-mix(in oklab,var(--ink) 3%,transparent);color:var(--ink)}
+.mv-wk.cur{color:var(--accent-ink)}
+.mv-wk u{position:relative;width:4px;height:30px;border-radius:2px;background:color-mix(in oklab,var(--ink) 7%,transparent);overflow:hidden;text-decoration:none}
+.mv-wk u i{position:absolute;left:0;right:0;bottom:0;height:var(--p);border-radius:2px;background:var(--accent);transform:scaleY(0);transform-origin:bottom;transition:transform .9s var(--spring) calc(var(--r,0) * 70ms + 380ms)}
+.mview.in .mv-wk u i{transform:none}
+.mv-grid > :nth-child(-n+8){border-top:0}
+.mv-day{position:relative;isolation:isolate;min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:5px;padding:8px 8px 6px 10px;border-left:1px solid var(--line);border-top:1px solid var(--line);cursor:pointer;outline-offset:-2px;transition:background .2s,box-shadow .2s}
+.mv-day:hover{background:color-mix(in oklab,var(--ink) 2.5%,transparent)}
+.mv-paint{position:absolute;left:0;right:0;bottom:0;z-index:-1;height:calc(var(--f,0) * 100%);background:linear-gradient(to top,color-mix(in oklab,var(--c) 15%,transparent),color-mix(in oklab,var(--c) 3%,transparent));transform:scaleY(0);transform-origin:bottom;transition:transform 1s var(--spring) calc(var(--i,0) * 20ms + 140ms)}
+.mview.in .mv-paint{transform:none}
+.mv-day.full .mv-paint{background:linear-gradient(to top,color-mix(in oklab,var(--c) 21%,transparent),color-mix(in oklab,var(--c) 6%,transparent))}
+.mv-top{display:flex;align-items:center;gap:6px;min-height:22px}
+.mv-date{display:inline-flex;align-items:baseline;gap:2px;padding:3px 0;font:650 16px/1 var(--f-display);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.mv-date small{font:700 10.5px/1 var(--f-body);letter-spacing:0;color:var(--muted)}
+.mv-day.today .mv-date{margin-left:-5px;padding:3px 6px;border-radius:7px;background:var(--now);color:#fff}
+.mv-day.today .mv-date small{color:inherit;opacity:.8}
+.mv-badge{margin-left:auto;display:flex;align-items:center;gap:5px;font:500 10.5px/1 var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.mv-badge svg{width:14px;height:14px}
+.mv-badge .moon{display:flex;color:var(--c-learn)}
+.mv-badge .ok{display:flex;color:color-mix(in oklab,var(--c) 80%,var(--ink))}
+.mv-badge .ok svg{stroke-width:2.6}
+.mv-items{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;min-height:0}
+.mv-items li{display:flex;align-items:center;gap:6px;min-width:0;font-size:11.5px;line-height:14px;color:var(--ink-2);opacity:0;transform:translateY(4px)}
+.mview.in .mv-items li{opacity:1;transform:none;transition:opacity .45s var(--ease-out) calc(var(--i,0) * 20ms + 260ms),transform .6s var(--spring) calc(var(--i,0) * 20ms + 260ms)}
+.mv-items li i{width:3px;height:11px;flex:none;border-radius:2px;background:color-mix(in oklab,var(--c) 38%,transparent)}
+.mv-items li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mv-items li.done{color:var(--ink)}
+.mv-items li.done i{background:var(--c)}
+.mv-items li.miss{color:var(--muted)}
+.mv-items li.miss i{background:color-mix(in oklab,var(--c) 22%,transparent)}
+.mv-items li.more{padding-left:9px;font:500 10.5px/14px var(--f-mono);color:var(--muted)}
+.mv-dots{display:none}
+.mv-day.out{background:color-mix(in oklab,var(--ink) 1.8%,transparent)}
+.mv-day.out > :not(.mv-paint){opacity:.4}
+.mv-day.out .mv-paint{opacity:.45}
+.mv-day.drop{box-shadow:inset 0 0 0 2px var(--dc,var(--accent));background:color-mix(in oklab,var(--dc,var(--accent)) 7%,transparent)}
+.mv-day.drop .mv-date{transform:scale(1.12);transition:transform .35s var(--spring)}

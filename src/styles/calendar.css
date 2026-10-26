@@ -1,0 +1,39 @@
+/* ---------- calendar ---------- */
+.cal{grid-area:cal;position:relative;min-height:0;min-width:0;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-1);overflow:hidden}
+.scroller{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;position:relative;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+.dayheads{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:var(--gw) repeat(7,minmax(0,1fr));background:color-mix(in oklab,var(--surface) 88%,transparent);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--line)}
+.corner{display:flex;align-items:flex-end;justify-content:center;padding-bottom:9px;font:500 10px/1 var(--f-mono);color:var(--muted);letter-spacing:.04em}
+.dh{position:relative;display:flex;flex-direction:column;gap:3px;min-width:0;padding:10px 10px 9px;border-left:1px solid var(--line);-webkit-tap-highlight-color:transparent}
+.dh-top{display:flex;align-items:center;gap:6px;min-height:16px}
+.dh-wd{font-size:11.5px;color:var(--muted);font-weight:500;letter-spacing:.1em;white-space:nowrap}
+.dh-today{white-space:nowrap;font-size:10px;font-weight:700;color:#fff;background:var(--now);padding:2px 5px;border-radius:5px;letter-spacing:.06em;line-height:1.2}
+.dh-badge{margin-left:auto;display:flex;gap:2px;color:var(--gold)}
+.dh-badge svg{width:14px;height:14px}
+.dh-badge .moon{color:var(--c-learn)}
+.dh-date{font:650 24px/1 var(--f-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums;font-variation-settings:"opsz" 48}
+.dh.today .dh-date{color:var(--now)}
+.dh-bar{display:flex;height:5px;border-radius:3px;background:var(--surface-2);overflow:hidden;margin-top:5px;box-shadow:inset 0 0 0 1px var(--line)}
+.dh-bar i{display:block;height:100%;background:var(--c);transition:width .8s var(--spring)}
+.dh-meta{display:flex;justify-content:space-between;gap:4px;font:500 10.5px/1.2 var(--f-mono);color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;margin-top:2px}
+.dh.full .dh-meta .fr{color:var(--warn)}
+.dh.pop-anim .dh-date{animation:datePop .7s var(--spring)}
+@keyframes datePop{0%{transform:scale(1)}30%{transform:scale(1.22)}100%{transform:scale(1)}}
+
+.grid{position:relative;display:grid;grid-template-columns:var(--gw) minmax(0,1fr);padding-block:12px 18px}
+.gutter{position:relative;height:calc(var(--hours) * var(--hh))}
+.hl{position:absolute;right:12px;margin-top:8px;font:500 10.5px/1 var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums;transition:opacity .25s}
+.hl.near{opacity:0}
+.energy{position:absolute;right:3px;top:0;bottom:0;width:3px;border-radius:2px}
+.band-tag{position:absolute;left:4px;font:700 9px/1 var(--f-body);color:color-mix(in oklab,var(--gold) 80%,var(--ink));letter-spacing:.1em;writing-mode:vertical-rl;padding-top:4px}
+.now-tag{position:absolute;right:6px;transform:translateY(-50%);font:600 10px/1 var(--f-mono);color:#fff;background:var(--now);padding:3px 5px;border-radius:5px;z-index:4;font-variant-numeric:tabular-nums;transition:top .9s var(--ease-out)}
+.cols{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));height:calc(var(--hours) * var(--hh));
+  background-image:linear-gradient(to bottom,var(--line) 1px,transparent 1px),linear-gradient(to bottom,color-mix(in oklab,var(--line) 45%,transparent) 1px,transparent 1px);
+  background-size:100% var(--hh),100% var(--hh);background-position:0 0,0 calc(var(--hh) / 2)}
+.bands{position:absolute;inset:0;pointer-events:none}
+.band{position:absolute;left:0;right:0;background:linear-gradient(90deg,color-mix(in oklab,var(--gold) 9%,transparent),color-mix(in oklab,var(--gold) 4%,transparent))}
+.col{position:relative;border-left:1px solid var(--line);touch-action:pan-y;cursor:crosshair;min-width:0}
+.col.past{background:color-mix(in oklab,var(--ink) 2.2%,transparent)}
+.elapsed{position:absolute;left:0;right:0;top:0;background:color-mix(in oklab,var(--ink) 2.6%,transparent);pointer-events:none;z-index:0;transition:height .9s var(--ease-out)}
+.nowline{position:absolute;left:-1px;right:0;height:2px;background:var(--now);z-index:6;pointer-events:none;transform:translateY(-1px);transition:top .9s var(--ease-out)}
+.nowline::before{content:"";position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--now);box-shadow:0 0 0 4px color-mix(in oklab,var(--now) 22%,transparent);animation:nowPulse 2.4s ease-in-out infinite}
+@keyframes nowPulse{50%{box-shadow:0 0 0 7px color-mix(in oklab,var(--now) 6%,transparent)}}
