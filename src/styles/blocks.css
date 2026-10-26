@@ -40,12 +40,6 @@
 .chk .chg.out{opacity:0;transition:opacity .28s}
 .chk .chg.pop{animation:chgPop .45s var(--ease-out) forwards}
 @keyframes chgPop{to{transform:scale(1.8);opacity:0}}
-.rsz{position:absolute;left:0;right:0;bottom:0;height:11px;pointer-events:none}
-.rsz::after{content:"";position:absolute;left:50%;bottom:3px;width:18px;height:3px;border-radius:2px;background:currentColor;opacity:0;transform:translateX(-50%);transition:opacity .2s}
-.blk:hover .rsz::after{opacity:.4}
-.rsz-t{top:0;bottom:auto;right:30px}
-.rsz-t::after{top:3px;bottom:auto;left:calc(50% + 15px)}
-.blk.xs .rsz-t{display:none}
 .blk.dimmed{opacity:.32}
 .dup-badge{position:absolute;right:6px;bottom:6px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:var(--on);font:700 15px/1 var(--f-display);box-shadow:0 0 0 2px var(--surface);transform:scale(0);transition:transform .35s var(--spring)}
 .blk.copying .dup-badge{transform:scale(1)}

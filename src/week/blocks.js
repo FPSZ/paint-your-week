@@ -20,7 +20,7 @@ export function layoutDay(list) {
 }
 export const isLate = (b, wk = V.wk) => { if (b.done) return false; const t = today(); if (wk < t.wk) return true; if (wk > t.wk) return false; return b.d < t.d || (b.d === t.d && b.e <= t.m); };
 export function makeBlockEl(b) {
-  const e = el('div', 'blk', `<div class="flood"></div><div class="bin"><div class="bt"></div><div class="bm"></div><div class="bq"></div></div><button class="chk" type="button" aria-label="标记完成">${I.check}</button><div class="rsz" aria-hidden="true"></div><div class="rsz rsz-t" aria-hidden="true"></div>`);
+  const e = el('div', 'blk', `<div class="flood"></div><div class="bin"><div class="bt"></div><div class="bm"></div><div class="bq"></div></div><button class="chk" type="button" aria-label="标记完成">${I.check}</button>`);
   e.dataset.id = b.id; e.tabIndex = 0; e.setAttribute('role', 'button');
   return e;
 }
