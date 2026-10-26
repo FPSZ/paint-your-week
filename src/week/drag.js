@@ -41,13 +41,21 @@ function magnetized(on) {
 // Looks at every block, not just the one under the pointer, so the bottom of a block that has another one
 // right below it can still be grabbed; on a tie the bottom edge wins (stretching down is the common case).
 export function edgeAt(col, x, y) {
-  let best = null, bd = Infinity;
+  const hits = []; let over = null;
   for (const blk of col.querySelectorAll('.blk')) {
     if (blk.classList.contains('draft')) continue;
     const r = blk.getBoundingClientRect(); if (x < r.left || x > r.right) continue;
-    const small = r.height < 30;
-    if (y >= r.bottom - (small ? 6 : 11) && y <= r.bottom + 7) { const dd = Math.abs(y - r.bottom); if (dd <= bd) { bd = dd; best = { blk, top: false }; } }
-    if (!small && y >= r.top - 7 && y <= r.top + 8 && x < r.right - 28) { const dd = Math.abs(y - r.top); if (dd < bd) { bd = dd; best = { blk, top: true }; } }
+    hits.push([blk, r]); if (y > r.top && y < r.bottom) over = blk;
+  }
+  let best = null, bs = Infinity;
+  for (const [blk, r] of hits) {
+    // short blocks keep their whole body for moving and clicking: their edges are grabbed from just outside
+    const small = r.height < 30, inB = small ? Math.min(3, r.height / 6) : 11, inT = small ? inB : 8;
+    // reaching outward goes at most 3px into another block's body, so a neighbour never takes over the middle
+    const reach = over && over !== blk ? 3 : small ? 10 : 7;
+    // in the gap between two blocks the upper one's bottom edge is favoured, so the seam stretches it downward
+    if (y >= r.bottom - inB && y <= r.bottom + reach) { const sc = Math.abs(y - r.bottom); if (sc <= bs) { bs = sc; best = { blk, top: false }; } }
+    if (y >= r.top - reach && y <= r.top + inT && (small || x < r.right - 28)) { const sc = Math.abs(y - r.top) + 2.5; if (sc < bs) { bs = sc; best = { blk, top: true }; } }
   }
   return best;
 }
@@ -269,11 +277,20 @@ export function pasteBlock() {
   return true;
 }
 
+let hinted = null;
+function edgeHint(near) {
+  const blk = near && near.blk, cls = near ? (near.top ? 'rs-top' : 'rs-bot') : '';
+  if (hinted && (hinted !== blk || !hinted.classList.contains(cls))) hinted.classList.remove('rs-top', 'rs-bot');
+  if (blk) blk.classList.add(cls);
+  hinted = blk;
+}
+
 export function setup() {
   colsBox.addEventListener('pointermove', e => {
     if (DRAG || e.pointerType !== 'mouse') return;
     const col = e.target.closest('.col');
-    colsBox.classList.toggle('edge-rs', !!(col && !e.target.closest('.chk') && edgeAt(col, e.clientX, e.clientY)));
+    const near = col && !e.target.closest('.chk') ? edgeAt(col, e.clientX, e.clientY) : null;
+    colsBox.classList.toggle('edge-rs', !!near); edgeHint(near);
   });
   colsBox.addEventListener('pointerdown', e => {
     if (e.button > 0 || DRAG) return;
@@ -292,8 +309,7 @@ export function setup() {
       if (e.target.closest('.chk')) return;
       const b = curBlock(blk.dataset.id); if (!b) return;
       const r = blk.getBoundingClientRect();
-      const rz = e.target.closest('.rsz');
-      DRAG = { kind: rz && !touch ? (rz.classList.contains('rsz-t') ? 'resize-top' : 'resize') : 'move', copy: !touch && e.altKey, d0: b.d, id: b.id, el: blk, pid: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, touch, active: false, offX: e.clientX - r.left, offY: e.clientY - r.top, rect: r, dur: b.e - b.s, cat: b.c, tilt: 0, px: e.clientX };
+      DRAG = { kind: 'move', copy: !touch && e.altKey, d0: b.d, id: b.id, el: blk, pid: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, touch, active: false, offX: e.clientX - r.left, offY: e.clientY - r.top, rect: r, dur: b.e - b.s, cat: b.c, tilt: 0, px: e.clientX };
       if (!touch) e.preventDefault();
     } else {
       const col = e.target.closest('.col'); if (!col) return;
@@ -333,5 +349,5 @@ export function setup() {
   window.addEventListener('pointerup', e => { if (DRAG && e.pointerId === DRAG.pid) finish(false); });
   window.addEventListener('pointercancel', e => { if (DRAG && e.pointerId === DRAG.pid) finish(true); });
   colsBox.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; V.px = e.clientX; V.py = e.clientY; V.overGrid = true; const b = e.target.closest('.blk'); V.hoverId = b && b.dataset.id !== 'draft' ? b.dataset.id : null; });
-  colsBox.addEventListener('pointerleave', () => { V.overGrid = false; V.hoverId = null; });
+  colsBox.addEventListener('pointerleave', () => { V.overGrid = false; V.hoverId = null; if (!DRAG) { colsBox.classList.remove('edge-rs'); edgeHint(null); } });
 }

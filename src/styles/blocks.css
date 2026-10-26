@@ -24,6 +24,11 @@
 .chk path{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:16;stroke-dashoffset:16;transition:stroke-dashoffset .35s .18s var(--ease-out)}
 .blk.done .chk circle{fill:rgba(255,255,255,.22)}
 .blk.done .chk path{stroke-dashoffset:0}
+/* the edge a press would drag */
+.blk::after{content:"";position:absolute;left:8px;right:8px;height:3px;border-radius:2px;background:var(--c);opacity:0;pointer-events:none;transition:opacity .15s}
+.blk.rs-top::after{top:1px;opacity:.9}
+.blk.rs-bot::after{bottom:1px;opacity:.9}
+.blk.done::after{background:var(--on)}
 .chk{touch-action:none}
 .chk.charging{transition:none}
 .chk.charging>svg:first-child circle{fill:transparent;transition:none}
@@ -35,7 +40,7 @@
 .chk .chg.out{opacity:0;transition:opacity .28s}
 .chk .chg.pop{animation:chgPop .45s var(--ease-out) forwards}
 @keyframes chgPop{to{transform:scale(1.8);opacity:0}}
-.rsz{position:absolute;left:0;right:0;bottom:0;height:11px;cursor:ns-resize}
+.rsz{position:absolute;left:0;right:0;bottom:0;height:11px;pointer-events:none}
 .rsz::after{content:"";position:absolute;left:50%;bottom:3px;width:18px;height:3px;border-radius:2px;background:currentColor;opacity:0;transform:translateX(-50%);transition:opacity .2s}
 .blk:hover .rsz::after{opacity:.4}
 .rsz-t{top:0;bottom:auto;right:30px}

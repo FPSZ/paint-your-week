@@ -73,8 +73,9 @@ export function chargeSound(a, t, T, key = 0) {
 }
 
 /* paint: a low thump and a short splash under a strummed major chord that rings out, sparkles on top */
-export function paintSound(a, t, key = 0, big = false) {
-  const out = bus(a), dec = big ? 1.7 : 1.15;
+export function paintSound(a, t, key = 0, big = false, level = .7) {
+  const out = a.createGain(), dec = big ? 1.7 : 1.15;
+  out.gain.value = level; out.connect(bus(a));
   const th = a.createOscillator(), tg = a.createGain();
   th.frequency.setValueAtTime(150, t); th.frequency.exponentialRampToValueAtTime(42, t + .2);
   tg.gain.setValueAtTime(0, t); tg.gain.linearRampToValueAtTime(.32, t + .006); tg.gain.setTargetAtTime(0, t + .006, .06);
@@ -91,7 +92,7 @@ export function paintSound(a, t, key = 0, big = false) {
 /* settle: the biggest paint, then the old fanfare on top: an arpeggio up, a held chord, a run of sparkles */
 export function settleSound(a, t) {
   const out = bus(a);
-  paintSound(a, t, 0, true);
+  paintSound(a, t, 0, true, 1);
   [72, 76, 79, 84].forEach((m, i) => ring(a, out, hz(m), t + .14 + i * .085, .05, .6, 0, 'triangle'));
   [84, 88, 91].forEach(m => ring(a, out, hz(m), t + .5, .03, 1.5));
   [96, 100, 103, 100, 105].forEach((m, i) => mallet(a, out, m, t + .82 + i * .055, .02, .26));
